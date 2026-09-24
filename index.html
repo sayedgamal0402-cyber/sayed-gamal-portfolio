@@ -1,1 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sayed Gamal — Digital Systems Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B1428; --card:#101F3B;
+  --lime:#B9E05A; --cream:#F5F3EA; --sub:#8A93AC; --line:rgba(255,255,255,.09);
+  --bg:var(--navy); --fg:var(--cream); --fg-sub:#9BA3BC; --accent:var(--lime);
+}
+:root[data-theme="light"]{
+  --bg:#F5F3EA; --card:#FFFFFF; --fg:#0B1428; --fg-sub:#565F78; --line:rgba(11,20,40,.1); --sub:#7A8299;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth; scroll-padding-top:76px;}
+html,body{height:100%;}
+body{background:var(--bg); color:var(--fg); font-family:'Inter',sans-serif; line-height:1.7; overflow-x:hidden; transition:background .3s,color .3s;}
+h1,h2,h3{font-family:'Cairo',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+.wrap{max-width:960px; margin:0 auto; padding:0 24px;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; border:none; background:none;}
+
+nav{position:fixed; inset-inline:0; top:0; z-index:60; backdrop-filter:blur(14px);
+  background:color-mix(in srgb, var(--bg) 80%, transparent); border-bottom:1px solid var(--line);
+  padding-top:env(safe-area-inset-top,0px);}
+.nav-in{max-width:960px; margin:0 auto; padding:16px 24px; display:flex; align-items:center; justify-content:space-between;}
+.logo{font-family:'Cairo',sans-serif; font-weight:800; font-size:1.2rem;}
+.logo span{color:var(--accent);}
+.nav-r{display:flex; align-items:center; gap:10px;}
+.icon-btn{width:38px; height:38px; border-radius:10px; background:var(--card); border:1px solid var(--line); font-size:1rem; color:var(--fg); display:flex; align-items:center; justify-content:center;}
+.menu-links{position:fixed; inset:0; top:0; background:var(--bg); z-index:55; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:28px; opacity:0; pointer-events:none; transition:opacity .3s;}
+.menu-links.open{opacity:1; pointer-events:auto;}
+.menu-links a{font-family:'Cairo',sans-serif; font-size:1.6rem; font-weight:700;}
+.menu-links a:hover{color:var(--accent);}
+
+.hero{padding:130px 0 56px; position:relative; border-bottom:1px solid var(--line); overflow:hidden;}
+.grid-bg{position:absolute; inset:0; opacity:.3; pointer-events:none;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:44px 44px; mask-image:radial-gradient(circle at 30% 10%, black, transparent 65%);}
+.badge{display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(185,224,90,.35); color:var(--accent);
+  font-weight:700; font-size:.88rem; padding:7px 16px; border-radius:20px; margin-bottom:20px; position:relative;}
+.badge .dot{width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(185,224,90,.18);}
+.hero h1{position:relative; font-size:clamp(2.3rem,8vw,3.6rem); font-weight:800; line-height:1.18;}
+.hero h1 .accent{color:var(--accent);}
+.hero p.role{position:relative; margin-top:18px; font-size:1.08rem; color:var(--fg-sub); max-width:44ch;}
+.hero-btns{position:relative; display:flex; gap:12px; flex-wrap:wrap; margin-top:32px;}
+.btn{padding:13px 24px; border-radius:12px; font-weight:700; font-size:.98rem;}
+.btn.primary{background:var(--accent); color:var(--navy);}
+.btn.ghost{border:1px solid var(--line); color:var(--fg);}
+.chips{position:relative; display:flex; gap:10px; flex-wrap:wrap; margin-top:34px;}
+.chip{font-size:.82rem; color:var(--fg-sub); border:1px solid var(--line); padding:6px 14px; border-radius:20px;}
+
+/* laptop typing widget */
+.laptop-wrap{position:relative; margin-top:44px; display:flex; justify-content:center;}
+.laptop{width:100%; max-width:360px;}
+.screen{background:#0A1220; border:1px solid var(--line); border-radius:14px 14px 4px 4px; padding:0; overflow:hidden;
+  box-shadow:0 30px 60px -20px rgba(0,0,0,.5);}
+.screen-bar{display:flex; gap:6px; padding:10px 14px; background:#0E1930; border-bottom:1px solid var(--line);}
+.screen-bar span{width:9px; height:9px; border-radius:50%;}
+.screen-bar span:nth-child(1){background:#F0605A;} .screen-bar span:nth-child(2){background:#F0B84E;} .screen-bar span:nth-child(3){background:#7BC96F;}
+.screen-body{padding:18px 16px; min-height:150px; font-size:.82rem; line-height:1.85;}
+.code-line{white-space:pre; color:#AAB3CB;}
+.code-line .kw{color:var(--accent);}
+.code-line .str{color:#F0B84E;}
+.code-line .fn{color:#7EC6E0;}
+.caret{display:inline-block; width:7px; height:1em; background:var(--accent); vertical-align:text-bottom; animation:blink 1s step-start infinite;}
+@keyframes blink{50%{opacity:0;}}
+.base{height:10px; background:linear-gradient(to bottom, #1C2C4E, #0E1930); border-radius:0 0 10px 10px; margin:0 -6px; position:relative;}
+.base::after{content:""; position:absolute; left:50%; top:0; transform:translateX(-50%); width:60px; height:5px; background:#0A1220; border-radius:0 0 6px 6px;}
+
+section{padding:64px 0;}
+.eyebrow{color:var(--accent); font-weight:700; font-size:.85rem; letter-spacing:.04em; margin-bottom:10px;}
+.sec-title{font-size:clamp(1.7rem,6vw,2.3rem); font-weight:800; line-height:1.2; margin-bottom:38px;}
+.border-b{border-bottom:1px solid var(--line);}
+
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+.num-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px;}
+.num-card .n{color:var(--accent); font-weight:800; font-family:'Cairo',sans-serif; margin-bottom:10px;}
+.num-card h3{font-size:1.1rem; margin-bottom:8px;}
+.num-card p{color:var(--fg-sub); font-size:.92rem;}
+
+.exp-card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:28px;}
+.exp-card h3{font-size:1.2rem; margin-bottom:4px;}
+.exp-card .org{color:var(--accent); font-weight:700; margin-bottom:4px;}
+.exp-card .dates{color:var(--sub); font-size:.88rem; margin-bottom:18px;}
+.exp-card ul{padding-inline-start:20px; color:var(--fg-sub); font-size:.95rem; display:flex; flex-direction:column; gap:10px;}
+
+.panel{background:var(--card); border:1px solid var(--line); border-radius:18px; margin-bottom:20px; overflow:hidden;}
+.panel-viz{height:150px; position:relative; background:linear-gradient(160deg, rgba(185,224,90,.1), transparent 60%); display:flex; align-items:flex-end; gap:10px; padding:24px;}
+.bar{width:22px; background:var(--accent); border-radius:4px 4px 0 0; opacity:.85;}
+.panel-body{padding:26px 26px 24px;}
+.tag-live{display:inline-block; font-size:.78rem; font-weight:700; color:var(--accent); border:1px solid rgba(185,224,90,.35); padding:4px 12px; border-radius:20px; margin-bottom:14px;}
+.panel h3{font-size:1.25rem; margin-bottom:10px;}
+.panel p{color:var(--fg-sub); font-size:.95rem;}
+.pills{display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;}
+.pill{font-size:.76rem; padding:5px 12px; border-radius:20px; border:1px solid var(--line); color:var(--fg-sub);}
+.case-link{display:inline-flex; align-items:center; gap:6px; color:var(--accent); font-weight:700; font-size:.9rem; margin-top:18px;}
+
+.stats{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:44px;}
+.stat-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px;}
+.stat-card b{display:block; font-family:'Cairo',sans-serif; font-size:2rem; font-weight:800; margin-bottom:8px;}
+.stat-card span{color:var(--fg-sub); font-size:.9rem;}
+
+.marquee{overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);}
+.marquee-row{display:flex; gap:16px; width:max-content; animation:scrollL 26s linear infinite;}
+.marquee-row.r2{animation:scrollR 26s linear infinite; margin-top:16px;}
+.marquee:hover .marquee-row{animation-play-state:paused;}
+@keyframes scrollL{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+@keyframes scrollR{from{transform:translateX(-50%);} to{transform:translateX(0);}}
+.skill{display:flex; align-items:center; gap:10px; font-size:.88rem; padding:10px 18px 10px 10px; border-radius:30px;
+  border:1px solid var(--line); background:var(--card); color:var(--fg-sub); white-space:nowrap; transition:transform .25s, border-color .25s;}
+.skill:hover{transform:translateY(-4px); border-color:rgba(185,224,90,.4);}
+.skill .ic{width:30px; height:30px; border-radius:50%; background:rgba(185,224,90,.12); display:flex; align-items:center; justify-content:center; font-size:1.05rem; flex-shrink:0;}
+
+.about-quote{font-size:1.35rem; font-weight:700; line-height:1.5; margin-bottom:28px;}
+.about-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; color:var(--fg-sub); font-size:.98rem;}
+
+.contact{text-align:center;}
+.contact h2{font-size:2rem; font-weight:800; margin-bottom:12px;}
+.contact p{color:var(--fg-sub); margin-bottom:28px;}
+.cta-row{display:flex; gap:12px; flex-wrap:wrap; justify-content:center;}
+.cta-row .btn{min-width:130px;}
+
+footer{padding:28px 24px; text-align:center; color:var(--sub); font-size:.85rem; border-top:1px solid var(--line); padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));}
+
+.reveal{opacity:0; transform:translateY(22px); transition:opacity .6s ease, transform .6s ease;}
+.reveal.in{opacity:1; transform:translateY(0);}
+
+@media(max-width:600px){ .grid2{grid-template-columns:1fr;} .stats{grid-template-columns:1fr;} .hero{padding:110px 0 44px;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <div class="logo">SG<span>.</span></div>
+    <div class="nav-r">
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">☀️</button>
+      <button class="icon-btn" id="menuBtn" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<div class="menu-links" id="menuLinks">
+  <a href="#work" data-close>What I Do</a>
+  <a href="#projects" data-close>Projects</a>
+  <a href="#skills" data-close>Skills</a>
+  <a href="#contact" data-close>Contact</a>
+</div>
+
+<section class="hero border-b">
+  <div class="grid-bg"></div>
+  <div class="wrap">
+    <div class="badge"><span class="dot"></span> Digital Systems Builder</div>
+    <h1>Hello, I'm <span class="accent">Sayed Gamal.</span></h1>
+    <p class="role">I design and build operational software that turns real-world workflows into reliable digital systems — from accounting and call centers to automation, analytics and reporting.</p>
+    <div class="hero-btns">
+      <a class="btn primary" href="#projects">View Projects ↗</a>
+      <a class="btn ghost" href="#contact">Contact Me</a>
+    </div>
+    <div class="chips">
+      <span class="chip">Accounting Systems</span>
+      <span class="chip">Operations</span>
+      <span class="chip">Automation</span>
+      <span class="chip">Analytics</span>
+    </div>
+
+    <div class="laptop-wrap reveal">
+      <div class="laptop">
+        <div class="screen">
+          <div class="screen-bar"><span></span><span></span><span></span></div>
+          <div class="screen-body mono" id="typeArea"></div>
+        </div>
+        <div class="base"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="border-b" id="work">
+  <div class="wrap">
+    <div class="eyebrow reveal">01 — WHAT I DO</div>
+    <h2 class="sec-title reveal">From workflow to working software.</h2>
+    <div class="grid2">
+      <div class="num-card reveal"><div class="n">01</div><h3>Digital Systems</h3><p>Designing internal platforms around real operational workflows and business rules.</p></div>
+      <div class="num-card reveal"><div class="n">02</div><h3>Automation</h3><p>Replacing repetitive manual work with connected processes, forms and integrations.</p></div>
+      <div class="num-card reveal"><div class="n">03</div><h3>Analytics</h3><p>Turning operational and financial data into dashboards, comparisons and decisions.</p></div>
+      <div class="num-card reveal"><div class="n">04</div><h3>Product Thinking</h3><p>Connecting user needs, workflow design, implementation and continuous improvement.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="border-b">
+  <div class="wrap">
+    <div class="eyebrow reveal">02 — EXPERIENCE</div>
+    <h2 class="sec-title reveal">Building systems inside real operations.</h2>
+    <div class="exp-card reveal">
+      <h3>Digital Systems &amp; Operations</h3>
+      <div class="org">Al-Boraq Charity Organization</div>
+      <div class="dates">2023 — Present</div>
+      <ul>
+        <li>Managed call-center workflows, representatives, reports and operational follow-up.</li>
+        <li>Designed and developed digital systems for donations, accounting, reporting and internal operations.</li>
+        <li>Connected data sources and built analytical reports for activities, channels and periods.</li>
+        <li>Worked across business requirements, process design, implementation and system improvement.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="border-b" id="projects">
+  <div class="wrap">
+    <div class="eyebrow reveal">03 — SELECTED PROJECTS</div>
+    <h2 class="sec-title reveal">Systems built for real use.</h2>
+
+    <div class="panel reveal">
+      <div class="panel-viz"><div class="bar" style="height:35%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:45%"></div><div class="bar" style="height:80%"></div><div class="bar" style="height:65%"></div></div>
+      <div class="panel-body">
+        <span class="tag-live">Production</span>
+        <h3>Al-Boraq Accounts</h3>
+        <p>Financial management system covering accounting workflows, purchasing, reporting, analytics and controlled access.</p>
+        <div class="pills"><span class="pill">Next.js</span><span class="pill">Supabase</span><span class="pill">Analytics</span><span class="pill">Security</span></div>
+        <div class="case-link">View Case Study →</div>
+      </div>
+    </div>
+
+    <div class="panel reveal">
+      <div class="panel-viz"><div class="bar" style="height:50%"></div><div class="bar" style="height:30%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:40%"></div></div>
+      <div class="panel-body">
+        <span class="tag-live">Production</span>
+        <h3>BORAQ SYSTEM 2026</h3>
+        <p>Digital transformation platform for donation data, activities, channels, quarterly comparisons and operational reporting.</p>
+        <div class="pills"><span class="pill">Data</span><span class="pill">Dashboards</span><span class="pill">Reports</span><span class="pill">Forecasting</span></div>
+        <div class="case-link">View Case Study →</div>
+      </div>
+    </div>
+
+    <div class="panel reveal">
+      <div class="panel-viz"><div class="bar" style="height:60%"></div><div class="bar" style="height:40%"></div><div class="bar" style="height:75%"></div><div class="bar" style="height:50%"></div><div class="bar" style="height:65%"></div></div>
+      <div class="panel-body">
+        <span class="tag-live">Production</span>
+        <h3>Call Center System</h3>
+        <p>Operational workflow for call-center activity, representatives, donor follow-up, reports and department coordination.</p>
+        <div class="pills"><span class="pill">Operations</span><span class="pill">Call Center</span><span class="pill">Reports</span></div>
+        <div class="case-link">View Case Study →</div>
+      </div>
+    </div>
+
+    <div class="panel reveal">
+      <div class="panel-viz"><div class="bar" style="height:45%"></div><div class="bar" style="height:65%"></div><div class="bar" style="height:35%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:50%"></div></div>
+      <div class="panel-body">
+        <span class="tag-live">Production</span>
+        <h3>WhatsApp Business Platform</h3>
+        <p>Business communication workflow designed around donor contact, data organization and controlled messaging processes.</p>
+        <div class="pills"><span class="pill">WhatsApp</span><span class="pill">Integrations</span><span class="pill">Automation</span></div>
+        <div class="case-link">View Case Study →</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card reveal"><b class="accent" style="color:var(--accent)" data-count="5">0+</b><span>Years of practical experience</span></div>
+      <div class="stat-card reveal"><b style="color:var(--accent)" data-count="6">0+</b><span>Digital systems / internal tools</span></div>
+      <div class="stat-card reveal"><b style="color:var(--fg)">4</b><span>Operational areas managed</span></div>
+      <div class="stat-card reveal"><b style="color:var(--fg)">2026</b><span>Current systems &amp; analytics work</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="border-b" id="skills">
+  <div class="wrap">
+    <div class="eyebrow reveal">04 — SKILLS &amp; STACK</div>
+    <h2 class="sec-title reveal">Tools are the means.<br>Systems are the goal.</h2>
+    <div class="marquee reveal">
+      <div class="marquee-row" id="row1"></div>
+      <div class="marquee-row r2" id="row2"></div>
+    </div>
+  </div>
+</section>
+
+<section class="border-b">
+  <div class="wrap">
+    <div class="eyebrow reveal">05 — ABOUT</div>
+    <p class="about-quote reveal">I don't just build software. I understand the workflow behind it — then turn that workflow into a practical, measurable and maintainable digital system.</p>
+    <div class="about-card reveal">My work sits between operations, product thinking, data and software development. I focus on solving the actual process first, then choosing the right technology to support it.</div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap reveal">
+    <div class="eyebrow">06 — CONTACT</div>
+    <h2>Have a system in mind?</h2>
+    <p>Let's turn the workflow into a real product.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="mailto:sayedgamal0402@gmail.com">Email Me ↗</a>
+      <a class="btn ghost" href="https://wa.me/201068144682" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn ghost" href="#">LinkedIn</a>
+      <a class="btn ghost" href="#">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>Sayed Gamal — Digital Systems Builder, Cairo</footer>
+
+<script>
+const root=document.documentElement, themeBtn=document.getElementById('themeBtn');
+try{ const s=localStorage.getItem('theme'); if(s){root.setAttribute('data-theme',s); themeBtn.textContent=s==='light'?'🌙':'☀️';} }catch(e){}
+themeBtn.addEventListener('click',()=>{
+  const cur=root.getAttribute('data-theme')==='light'?'dark':'light';
+  if(cur==='light'){root.setAttribute('data-theme','light'); themeBtn.textContent='🌙';}
+  else{root.removeAttribute('data-theme'); themeBtn.textContent='☀️';}
+  try{localStorage.setItem('theme',cur);}catch(e){}
+});
+
+const menuBtn=document.getElementById('menuBtn'), menuLinks=document.getElementById('menuLinks');
+menuBtn.addEventListener('click',()=>menuLinks.classList.toggle('open'));
+menuLinks.querySelectorAll('[data-close]').forEach(a=>a.addEventListener('click',()=>menuLinks.classList.remove('open')));
+
+const io=new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+let counted=false;
+const statsEl=document.querySelector('.stats');
+const cio=new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting && !counted){ counted=true;
+  document.querySelectorAll('[data-count]').forEach(b=>{ const t=+b.dataset.count; let c=0;
+    const step=()=>{ c++; b.textContent=c+'+'; if(c<t) requestAnimationFrame(()=>setTimeout(step,90)); };
+    step(); }); } }); },{threshold:.4});
+if(statsEl) cio.observe(statsEl);
+
+// skills marquee — real logo/icon SVGs
+const ICONS = {
+  python:{vb:'0 0 24 24', mode:'fill', color:'#3776AB', d:'M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z'},
+  nextjs:{vb:'0 0 24 24', mode:'fill', color:'var(--fg)', d:'M18.665 21.978C16.758 23.255 14.465 24 12 24 5.377 24 0 18.623 0 12S5.377 0 12 0s12 5.377 12 12c0 3.583-1.574 6.801-4.067 9.001L9.219 7.2H7.2v9.596h1.615V9.251l9.85 12.727Zm-3.332-8.533 1.6 2.061V7.2h-1.6v6.245Z'},
+  supabase:{vb:'0 0 24 24', mode:'fill', color:'#3ECF8E', d:'M11.9 1.036c-.015-.986-1.26-1.41-1.874-.637L.764 12.05C-.33 13.427.65 15.455 2.409 15.455h9.579l.113 7.51c.014.985 1.259 1.408 1.873.636l9.262-11.653c1.093-1.375.113-3.403-1.645-3.403h-9.642z'},
+  flask:{vb:'0 0 24 24', mode:'fill', color:'var(--fg)', d:'M10.773 2.878c-.013 1.434.322 4.624.445 5.734l-8.558 3.83c-.56-.959-.98-2.304-1.237-3.38l-.06.027c-.205.09-.406.053-.494-.088l-.011-.018-.82-1.506c-.058-.105-.05-.252.024-.392a.78.78 0 0 1 .358-.331l9.824-4.207c.146-.064.299-.063.4.004.106.062.127.128.13.327Zm.68 7c.523 1.97.675 2.412.832 2.818l-7.263 3.7a19.35 19.35 0 0 1-1.81-2.83l8.24-3.689Zm12.432 8.786h.003c.283.402-.047.657-.153.698l-.947.37c.037.125.035.319-.217.414l-.736.287c-.229.09-.398-.059-.42-.2l-.025-.125c-4.427 1.784-7.94 1.685-10.696.647-1.981-.745-3.576-1.983-4.846-3.379l6.948-3.54c.721 1.431 1.586 2.454 2.509 3.178 2.086 1.638 4.415 1.712 5.793 1.563l-.047-.233c-.015-.077.007-.135.086-.165l.734-.288a.302.302 0 0 1 .342.086l.748-.288a.306.306 0 0 1 .341.086l.583.89Z'},
+  streamlit:{vb:'0 0 24 24', mode:'fill', color:'#FF4B4B', d:'M16.673 11.32l6.862-3.618c.233-.136.554.12.442.387L20.463 17.1zm-8.556-.229l3.473-5.187c.203-.328.578-.316.793-.028l7.886 11.75zm-3.375 7.25c-.28 0-.835-.284-.993-.716l-3.72-9.46c-.118-.331.139-.614.48-.464l19.474 10.306c-.149.147-.453.337-.72.334z'},
+  gsheets:{vb:'0 0 24 24', mode:'fill', color:'#34A853', d:'M11.318 12.545H7.91v-1.909h3.41v1.91zM14.728 0v6h6l-6-6zm1.363 10.636h-3.41v1.91h3.41v-1.91zm0 3.273h-3.41v1.91h3.41v-1.91zM20.727 6.5v15.864c0 .904-.732 1.636-1.636 1.636H4.909a1.636 1.636 0 0 1-1.636-1.636V1.636C3.273.732 4.005 0 4.909 0h9.318v6.5h6.5zm-3.273 2.773H6.545v7.909h10.91v-7.91zm-6.136 4.636H7.91v1.91h3.41v-1.91z'},
+  vercel:{vb:'0 0 24 24', mode:'fill', color:'var(--fg)', d:'m12 1.608 12 20.784H0Z'},
+  whatsapp:{vb:'0 0 24 24', mode:'fill', color:'#25D366', d:'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z'},
+  excel:{vb:'0 0 24 24', mode:'excel'},
+  lock:{vb:'0 0 24 24', mode:'stroke', color:'var(--accent)', d:'M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z'},
+  shield:{vb:'0 0 24 24', mode:'stroke', color:'var(--accent)', d:'M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z'},
+  key:{vb:'0 0 24 24', mode:'stroke', color:'var(--accent)', d:'M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z'},
+  clipboard:{vb:'0 0 24 24', mode:'stroke', color:'var(--accent)', d:'M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z'},
+  chart:{vb:'0 0 24 24', mode:'stroke', color:'var(--accent)', d:'M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z'}
+};
+function iconSVG(key){
+  const i=ICONS[key];
+  if(i.mode==='excel') return '<svg viewBox="0 0 24 24" width="18" height="18"><rect x="1" y="1" width="22" height="22" rx="5" fill="#217346"/><path d="M7 6l4 6-4 6h2.6l2.8-4.4L15.2 18H18l-4-6 4-6h-2.6l-2.8 4.4L9.8 6z" fill="#fff"/></svg>';
+  if(i.mode==='stroke') return `<svg viewBox="${i.vb}" width="17" height="17" fill="none" stroke="${i.color}" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="${i.d}"/></svg>`;
+  return `<svg viewBox="${i.vb}" width="17" height="17" fill="${i.color}"><path d="${i.d}"/></svg>`;
+}
+const skillsRow1=[['python','Python'],['nextjs','Next.js'],['supabase','Supabase'],['flask','Flask'],['streamlit','Streamlit'],['gsheets','Google Sheets'],['excel','Excel']];
+const skillsRow2=[['vercel','Vercel'],['whatsapp','WhatsApp Business API'],['shield','RLS'],['key','Authentication'],['lock','Role-Based Access'],['clipboard','Audit Logs'],['chart','Analytics']];
+function fillRow(id, items){
+  const row=document.getElementById(id);
+  const html=items.map(([ic,label])=>`<span class="skill"><span class="ic">${iconSVG(ic)}</span>${label}</span>`).join('');
+  row.innerHTML=html+html;
+}
+fillRow('row1', skillsRow1);
+fillRow('row2', skillsRow2);
+
+// typewriter code animation
+const codeLines=[
+  {t:'const ', c:'kw'},{t:'system', c:''},{t:' = ', c:''},{t:'buildDashboard', c:'fn'},{t:'(', c:''},{t:'"donations"', c:'str'},{t:');', c:''}
+];
+const lines=[
+ [['const ','kw'],['revenue','fn'],[' = ',''],['forecast','fn'],['(donors);','']],
+ [['if','kw'],[' (period.locked) ',''],['deny','fn'],['(edit);','']],
+ [['await ','kw'],['db','fn'],['.query(',''],['"SELECT * FROM donations"','str'],[');','']],
+ [['export ','kw'],['function ','kw'],['syncWhatsApp','fn'],['() {','']]
+];
+const typeArea=document.getElementById('typeArea');
+let li=0;
+function renderLine(spans, done){
+  const div=document.createElement('div'); div.className='code-line';
+  let i=0;
+  function typeChar(){
+    if(i>=spans.length){ if(!done) div.appendChild(mkCaret()); return; }
+    const [text,cls]=spans[i];
+    let ci=0;
+    const span=document.createElement('span'); if(cls) span.className=cls; div.appendChild(span);
+    (function typeInner(){
+      if(ci<text.length){ span.textContent+=text[ci]; ci++; setTimeout(typeInner,22); }
+      else{ i++; typeChar(); }
+    })();
+  }
+  typeChar();
+  return div;
+}
+function mkCaret(){ const s=document.createElement('span'); s.className='caret'; return s; }
+function runTyping(){
+  typeArea.innerHTML='';
+  let idx=0;
+  function next(){
+    if(idx>=lines.length){ setTimeout(runTyping,1400); return; }
+    const div=renderLine(lines[idx], idx===lines.length-1);
+    typeArea.appendChild(div);
+    const totalChars=lines[idx].reduce((a,[t])=>a+t.length,0);
+    setTimeout(()=>{ idx++; next(); }, totalChars*22+260);
+  }
+  next();
+}
+runTyping();
+</script>
+</body>
+</html>
 
